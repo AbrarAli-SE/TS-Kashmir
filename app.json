@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "TS-Kashmir",
-    "slug": "TS-Kashmir",
+    "name": "TS Kashmir",
+    "slug": "ts-kashmir",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.abrarali90.tskashmir"
     },
     "web": {
       "bundler": "metro",
@@ -30,12 +31,21 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
+          "preventAutoHide": true,
           "backgroundColor": "#ffffff"
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "5a44f629-6114-44e3-a724-c28fe61db9fb"
+      }
     }
   }
 }
