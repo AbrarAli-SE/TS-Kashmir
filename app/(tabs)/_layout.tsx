@@ -1,8 +1,7 @@
-import React from 'react';
 import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons'; // Import Ionicons
-//imort colors by constants
-import COLORS from '../../constants/theme'; // Adjusted the path to match the correct location
+import  TabIcon  from '../../styles/TabIcon'; 
+import { Ionicons } from '@expo/vector-icons'
+import COLORS from '../../constants/theme'; // Adjust the path to where COLORS is defined
 
 export default function TabsLayout() {
   return (
@@ -10,49 +9,79 @@ export default function TabsLayout() {
       screenOptions={{
         tabBarShowLabel: false,
         headerShown: false,
-        tabBarActiveTintColor: COLORS.primary, // Active tab color
-        tabBarInactiveTintColor: COLORS.textTwo, // Inactive tab color
+
+        tabBarActiveTintColor: COLORS.primary, // Active tab color  
+        tabBarInactiveTintColor: COLORS.textTwo, // Inactive tab color  
+
         tabBarStyle: {
-          backgroundColor: COLORS.white, // Tab bar background color
-          borderTopWidth: 0,
+          backgroundColor: COLORS.white, // Tab bar background color  
           position: 'absolute',
-          elevation: 0,
-          height: 60,
-          paddingBottom: 12,
+          height: 84,
+          paddingHorizontal: 10,
+          paddingTop: 10,
         },
       }}
-      >
+    >
       <Tabs.Screen
         name="dashboard"
         options={{
-          tabBarIcon: ({ size, color }) => <Ionicons name="home" size={size} color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabIcon
+              icon={require('../../assets/images/tabs_Icon/dashboard.png')} // Path to your custom logo
+              label="Dashboard"
+              color={color}
+            />
+          ),
         }}
       />
-        <Tabs.Screen
-          name="list"
-          options={{
-            tabBarIcon: ({ size, color }) => <Ionicons name="list" size={size} color={color} />,
-          }}
-        />
+      <Tabs.Screen
+        name="list"
+        options={{
+          tabBarIcon: ({ color }) => (
+            <TabIcon
+              icon={require('../../assets/images/tabs_Icon/list.png')} // Replace with your list icon
+              label="List"
+              color={color}
+            />
+          ),
+        }}
+      />
       <Tabs.Screen
         name="search"
         options={{
-          tabBarIcon: ({ size, color }) => <Ionicons name="search" size={size} color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabIcon
+              icon={require('../../assets/images/tabs_Icon/search.png')} // Replace with your search icon
+              label="Search"
+              color={color}
+            />
+          ),
         }}
       />
-       
-        <Tabs.Screen
-          name="vehicle"
-          options={{
-            tabBarIcon: ({ size, color }) => <Ionicons name="car" size={size} color={color} />,
-          }}
-        /> 
-        <Tabs.Screen
-          name="employee"
-          options={{
-            tabBarIcon: ({ size, color }) => <Ionicons name="people" size={size} color={color} />,
-          }}
-        />
+      <Tabs.Screen
+        name="vehicle"
+        options={{
+          tabBarIcon: ({ color }) => (
+            <TabIcon
+              icon={require('../../assets/images/tabs_Icon/vehicle.png')} // Replace with your vehicle icon
+              label="Vehicle"
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="employee"
+        options={{
+          tabBarIcon: ({ color }) => (
+            <TabIcon
+              icon={require('../../assets/images/tabs_Icon/employee.png')} // Replace with your employee icon
+              label="Employee"
+              color={color}
+            />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

@@ -9,7 +9,7 @@ export default function RootLayout() {
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsSplashVisible(false);
-            router.replace('/(tabs)');
+            router.replace('/(tabs)/dashboard');
         }, 3000);
 
         return () => clearTimeout(timer);
