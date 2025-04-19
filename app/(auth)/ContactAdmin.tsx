@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, SafeAreaView, ScrollView } from 'react-native';
+import COLORS from '../../constants/theme'; // Import your colors from constants
+import { View, Text, TextInput, TouchableOpacity, Image, SafeAreaView, ScrollView, ActivityIndicator } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import styles from '../../styles/contactAdminStyles';
 import { collection, addDoc } from 'firebase/firestore'; // Import Firestore methods
-import { db } from '../../firebaseConfig'; // Import Firestore instance
 
+// Regular expression for email validation
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { db } from '../../firebaseConfig'; // Import Firestore instance
 
 export default function ContactAdmin() {
     const [name, setName] = useState('');
@@ -13,12 +16,14 @@ export default function ContactAdmin() {
     const [queryType, setQueryType] = useState(''); // Dropdown selection
     const [description, setDescription] = useState(''); // Optional query description
     const [errorMessage, setErrorMessage] = useState('');
+    const [loading, setLoading] = useState(false); // Properly define loading state
 
     // Function to validate if the form is ready for submission
     const isFormValid = () => {
         return (
             name.trim() !== '' &&
             email.trim() !== '' &&
+            emailRegex.test(email) && // Validate email format
             phone.trim().length === 11 && // Ensure phone number is exactly 11 digits
             queryType.trim() !== ''
         );
@@ -30,6 +35,7 @@ export default function ContactAdmin() {
             return;
         }
         setErrorMessage('');
+        setLoading(true); // Show spinner
 
         try {
             // Save data to Firestore with an auto-generated document ID
@@ -51,7 +57,7 @@ export default function ContactAdmin() {
                 queryType,
                 description: description || 'No description provided',
                 createdAt: formattedDate, // Save formatted timestamp
-                    });
+            });
 
             alert('Your query has been submitted successfully!');
             setName('');
@@ -62,6 +68,8 @@ export default function ContactAdmin() {
         } catch (error) {
             console.error('Error saving query:', error);
             alert('Failed to submit your query. Please try again later.');
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
@@ -78,9 +86,12 @@ export default function ContactAdmin() {
                     {/* Title */}
                     <Text style={styles.title}>Contact Admin</Text>
 
-                    {/* Error Message */}
-                    {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
-
+                    {/* Spinner Overlay */}
+                    {loading && (
+                        <View style={styles.spinnerOverlay}>
+                            <ActivityIndicator size={50} color={COLORS.primary} />
+                        </View>
+                    )}
                     {/* Name Input */}
                     <TextInput
                         style={styles.input}
@@ -96,7 +107,10 @@ export default function ContactAdmin() {
                         placeholder="Enter your email"
                         placeholderTextColor="#aaa"
                         value={email}
-                        onChangeText={setEmail}
+                        onChangeText={(text) => {
+                            setEmail(text);
+                            setErrorMessage(emailRegex.test(text) ? '' : 'Invalid email format'); // Set error message if email is invalid
+                        }}
                         keyboardType="email-address"
                         autoCapitalize="none"
                     />
@@ -138,12 +152,9 @@ export default function ContactAdmin() {
 
                     {/* Submit Button */}
                     <TouchableOpacity
-                        style={[
-                            styles.button,
-                            !isFormValid() && styles.buttonDisabled, // Apply disabled style if form is invalid
-                        ]}
+                        style={[styles.button, !isFormValid() && styles.buttonDisabled]}
                         onPress={handleSubmit}
-                        disabled={!isFormValid()} // Disable button if form is invalid
+                        disabled={!isFormValid()}
                     >
                         <Text style={styles.buttonText}>Submit</Text>
                     </TouchableOpacity>

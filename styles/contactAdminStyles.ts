@@ -85,11 +85,16 @@ const styles = StyleSheet.create({
         color: COLORS.white,
     },
 
-    errorText: {
-        color: '#ff4d4d',
-        fontSize: 14,
-        marginBottom: 16,
-        textAlign: 'left',
+    spinnerOverlay: {
+        position: 'absolute',
+        top: -170, // Adjusted to cover the logo container
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent white background
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1000, // Ensure it overlays everything
     },
 });
 

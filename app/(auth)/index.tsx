@@ -41,6 +41,7 @@ export default function EmailAndPasswordInput() {
 
     // Function to handle "Continue" button press
     const handleContinue = async () => {
+        setLoading(true); // Show spinner
         try {
             // Attempt to sign in with the provided email and password
             await signInWithEmailAndPassword(auth, email, password);
@@ -48,17 +49,10 @@ export default function EmailAndPasswordInput() {
             router.push('/(tabs)/dashboard');
         } catch (error: any) {
             setErrorMessage('Invalid credentials. Please contact admin.');
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
-
-    // Show a loading spinner while checking authentication state
-    if (loading) {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <ActivityIndicator size="large" color={COLORS.primary} />
-            </View>
-        );
-    }
 
     return (
         <View style={{ flex: 1 }}>
@@ -109,6 +103,12 @@ export default function EmailAndPasswordInput() {
                                 style={{ width: 20, height: 20 }} // Adjust size as needed
                             />
                         </TouchableOpacity>
+                    </View>
+                )}
+                {/* Spinner Overlay */}
+                {loading && (
+                    <View style={styles.spinnerOverlay}>
+                        <ActivityIndicator size={50} color={COLORS.primary} />
                     </View>
                 )}
 
