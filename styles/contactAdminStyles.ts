@@ -66,6 +66,10 @@ const styles = StyleSheet.create({
         height: 50,
     },
 
+    buttonDisabled: {
+        backgroundColor: '#ff9999', // Lighter red for disabled state
+    },
+
     button: {
         width: '100%',
         height: 50,

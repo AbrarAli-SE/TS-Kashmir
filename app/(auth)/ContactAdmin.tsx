@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, SafeAreaView, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import styles from '../../styles/contactAdminStyles';
+import { collection, addDoc } from 'firebase/firestore'; // Import Firestore methods
+import { db } from '../../firebaseConfig'; // Import Firestore instance
+
 
 export default function ContactAdmin() {
     const [name, setName] = useState('');
@@ -11,15 +14,55 @@ export default function ContactAdmin() {
     const [description, setDescription] = useState(''); // Optional query description
     const [errorMessage, setErrorMessage] = useState('');
 
-    const handleSubmit = () => {
-        if (!name || !email || !phone || !queryType) {
-            setErrorMessage('All fields except description are mandatory.');
+    // Function to validate if the form is ready for submission
+    const isFormValid = () => {
+        return (
+            name.trim() !== '' &&
+            email.trim() !== '' &&
+            phone.trim().length === 11 && // Ensure phone number is exactly 11 digits
+            queryType.trim() !== ''
+        );
+    };
+
+    const handleSubmit = async () => {
+        if (!isFormValid()) {
+            setErrorMessage('All fields except description are mandatory, and phone number must be 11 digits.');
             return;
         }
         setErrorMessage('');
-        // Handle form submission logic here
-        console.log({ name, email, phone, queryType, description });
-        alert('Your query has been submitted successfully!');
+
+        try {
+            // Save data to Firestore with an auto-generated document ID
+            const now = new Date();
+            const formattedDate = now.toLocaleString('en-US', {
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true,
+            }) + ` - ${now.toLocaleDateString('en-US', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+            })}`;
+
+            await addDoc(collection(db, 'queries'), {
+                name,
+                email,
+                phone,
+                queryType,
+                description: description || 'No description provided',
+                createdAt: formattedDate, // Save formatted timestamp
+                    });
+
+            alert('Your query has been submitted successfully!');
+            setName('');
+            setEmail('');
+            setPhone('');
+            setQueryType('');
+            setDescription('');
+        } catch (error) {
+            console.error('Error saving query:', error);
+            alert('Failed to submit your query. Please try again later.');
+        }
     };
 
     return (
@@ -94,7 +137,14 @@ export default function ContactAdmin() {
                     />
 
                     {/* Submit Button */}
-                    <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                    <TouchableOpacity
+                        style={[
+                            styles.button,
+                            !isFormValid() && styles.buttonDisabled, // Apply disabled style if form is invalid
+                        ]}
+                        onPress={handleSubmit}
+                        disabled={!isFormValid()} // Disable button if form is invalid
+                    >
                         <Text style={styles.buttonText}>Submit</Text>
                     </TouchableOpacity>
                 </ScrollView>

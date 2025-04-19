@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, SafeAreaView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Image, SafeAreaView, ActivityIndicator } from 'react-native';
 import styles from '../../styles/authStyles';
 import { useRouter } from 'expo-router';
 import COLORS from '../../constants/theme';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../firebaseConfig';
 
 export default function EmailAndPasswordInput() {
@@ -12,7 +12,24 @@ export default function EmailAndPasswordInput() {
     const [errorMessage, setErrorMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false); // Toggle password visibility
     const [isEmailValid, setIsEmailValid] = useState(false); // Track email validity
+    const [loading, setLoading] = useState(true); // Track loading state
     const router = useRouter();
+
+    // Check if the user is already logged in
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // If the user is logged in, navigate to the dashboard
+                router.push('/(tabs)/dashboard');
+            } else {
+                // If no user is logged in, stop the loading spinner
+                setLoading(false);
+            }
+        });
+
+        // Cleanup the listener on component unmount
+        return unsubscribe;
+    }, []);
 
     // Function to validate email format
     const validateEmail = (input: string) => {
@@ -34,22 +51,27 @@ export default function EmailAndPasswordInput() {
         }
     };
 
+    // Show a loading spinner while checking authentication state
+    if (loading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" color={COLORS.primary} />
+            </View>
+        );
+    }
+
     return (
         <View style={{ flex: 1 }}>
-
-
             {/* Logo Container */}
             <View style={styles.logoContainer}>
-                <Image source={require('../../assets/images/ts-logo.png')} style={styles.logo}
-                />
+                <Image source={require('../../assets/images/ts-logo.png')} style={styles.logo} />
             </View>
 
             <SafeAreaView style={styles.container}>
-
                 {/* Title */}
                 <Text style={styles.title}>Login</Text>
 
-                {/* subTitle */}
+                {/* Subtitle */}
                 <Text style={styles.subtitle}>Enter your registered email to proceed</Text>
 
                 {/* Email Input */}
@@ -78,7 +100,6 @@ export default function EmailAndPasswordInput() {
                             onPress={() => setShowPassword(!showPassword)}
                             style={styles.eyeIcon} // Position the eye icon properly
                         >
-                            {/* Replace Text with Custom Icon */}
                             <Image
                                 source={
                                     showPassword
