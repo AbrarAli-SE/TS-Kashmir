@@ -1,7 +1,8 @@
 import { Tabs } from 'expo-router';
-import  TabIcon  from '../../styles/TabIcon'; 
+import TabIcon from '../../styles/TabIcon';
 import { Ionicons } from '@expo/vector-icons'
 import COLORS from '../../constants/theme'; // Adjust the path to where COLORS is defined
+import { TouchableWithoutFeedback, View } from 'react-native';
 
 export default function TabsLayout() {
   return (
@@ -20,11 +21,17 @@ export default function TabsLayout() {
           paddingHorizontal: 10,
           paddingTop: 10,
         },
+//disable ripple effect on the tab bar while touching the icon
+        
+       
+
+
       }}
     >
       <Tabs.Screen
         name="dashboard"
         options={{
+          
           tabBarIcon: ({ color }) => (
             <TabIcon
               icon={require('../../assets/images/tabs_Icon/dashboard.png')} // Path to your custom logo

@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontFamily: 'Roboto',
         fontSize: 12,
-        width: 50,
+        width: 60,
         fontStyle: 'normal',
         fontWeight: '400',
         lineHeight: 16,
