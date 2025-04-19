@@ -9,7 +9,7 @@ export default function RootLayout() {
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsSplashVisible(false);
-            router.replace('/(tabs)/dashboard'); // Navigate to the login screen after 3 seconds
+            router.replace('/(auth)'); // Navigate to the login screen after 3 seconds
         }, 3000);
 
         return () => clearTimeout(timer);

@@ -6,7 +6,7 @@ export default function Dashboard() {
   const router = useRouter(); // Initialize router for navigation
 
   const navigateToLogin = () => {
-    router.push('/()'); // Navigate to the login screen
+    router.push('/(auth)'); // Navigate to the login screen
   };
 
   return (
