@@ -19,8 +19,8 @@ export default function EmailAndPasswordInput() {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
-                // If the user is logged in, navigate to the dashboard
-                router.push('/(tabs)/dashboard');
+                // If the user is logged in, replace the login screen with the dashboard
+                router.replace('/(tabs)/dashboard');
             } else {
                 // If no user is logged in, stop the loading spinner
                 setLoading(false);
