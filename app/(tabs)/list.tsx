@@ -4,6 +4,9 @@ import { collection, getDocs, query } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 import listStyles from '../../styles/listStyles'; // Import styles
 import { AntDesign, MaterialIcons } from '@expo/vector-icons'; // For icons
+import FolderCard from '../../components/FolderCard';
+import FileCard from '../../components/FileCard';
+
 
 export default function List() {
   const [folders, setFolders] = useState<any[]>([]); // Store folders and files
@@ -88,36 +91,44 @@ export default function List() {
       });
     }
   };
+  const handleFolderPress = (folderId: string) => {
+    setCurrentFolder(folderId); // Navigate into the folder
+  };
 
   const handleBackPress = () => {
-    if (currentFolder) {
-      setCurrentFolder(null); // Go back to the root folder
-    }
+    setCurrentFolder(null); // Go back to the root folder
   };
 
   const renderFolderOrFile = ({ item }: { item: any }) => {
     if (item.type === 'folder') {
       return (
-        <TouchableOpacity
-          style={listStyles.button}
-          onPress={() => setCurrentFolder(item.id)} // Navigate to the folder
-        >
-          <Text style={listStyles.buttonText}>{item.name}</Text>
-          <Text style={listStyles.subText}>
-            {item.subFoldersCount} Folders, {item.subFilesCount} Files
-          </Text>
-        </TouchableOpacity>
+        <FolderCard
+          folder={{
+            id: item.id,
+            name: item.name,
+            totalItems: item.subFoldersCount || 0,
+            totalValue: item.totalValue || '0',
+          }}
+          onPress={() => handleFolderPress(item.id)} // Handle folder click
+        />
       );
     } else if (item.type === 'file') {
       return (
-        <TouchableOpacity style={listStyles.button}>
-          <Text style={listStyles.buttonText}>{item.name}</Text>
-          <Text style={listStyles.subText}>Quantity: {item.quantity}</Text>
-        </TouchableOpacity>
+        <FileCard
+          file={{
+            id: item.id,
+            name: item.name,
+            price: item.price || 0,
+            quantity: item.quantity || 0,
+            pack: item.pack || 0,
+            image: item.image || null, // Use null if no image is provided
+          }}
+        />
       );
     }
     return null;
   };
+
 
   if (loading) {
     return (
@@ -126,11 +137,15 @@ export default function List() {
       </View>
     );
   }
+  const getCurrentFolderName = () => {
+    if (!currentFolder) return 'Inventory'; // Root folder name
+    const folder = folders.find((folder) => folder.id === currentFolder);
+    return folder ? folder.name : 'Folder'; // Show folder name or fallback to "Folder"
+  };
 
   const currentData = isRootFolder
     ? folders // Show all folders in the root
-    : folders.find((folder) => folder.id === currentFolder)?.files || []; // Show files in the selected folder
-
+    : folders.find((folder) => folder.id === currentFolder)?.files || []; // Show files and subfolders in the selected folder
   return (
     <View style={listStyles.container}>
       {/* Header */}
@@ -141,7 +156,7 @@ export default function List() {
           </TouchableOpacity>
         )}
         <Text style={listStyles.headerTitle}>
-          {isRootFolder ? 'Inventory' : `Folder: ${currentFolder}`}
+          {getCurrentFolderName()}
         </Text>
       </View>
 
